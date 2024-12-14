@@ -36,6 +36,10 @@ public class BookingController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
+        catch (BookingBufferTimeNotMetException ex)
+        {
+            return BadRequest(ex.Message);
+        }
         catch (BookingCapacityExceededException ex)
         {
             return Conflict(ex.Message);

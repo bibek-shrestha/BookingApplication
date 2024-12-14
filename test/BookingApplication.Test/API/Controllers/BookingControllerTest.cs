@@ -66,6 +66,16 @@ public class BookingControllerTest
     }
 
     [Fact]
+    public async Task PostBooking_ShouldReturn_Status400_OnError_ForBookingWithNotEnoughBuffer()
+    {
+        var bookingRequest = RequestAndResponseBodyHelper.CreateBookingRequestForOutOfTimeBookingException();
+        _mockBookingService.Setup(service => service.CreateBooking(bookingRequest)).Throws(new BookingBufferTimeNotMetException());
+        var result = await _bookingControllerSut.CreateBooking(bookingRequest);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
+    }
+
+    [Fact]
     public async Task PostBooking_ShouldReturn_Status409_OnError_ForMoreThanFourBookings()
     {
         var bookingRequest = RequestAndResponseBodyHelper.CreateBookingRequest();

@@ -34,6 +34,11 @@ public class BookingValidator : IBookingValidator
             _logger.LogWarning("Booking time ({BookingTime}) is for a past time.", bookingTime);
             throw new BookingBeforeCurrentTimeException("Booking cannot be made for a time in the past. Please select a future time for your booking.");
         }
+        if (!IsWithinBufferTime(bookingTime))
+        {
+            _logger.LogWarning("Booking time ({BookingTime}) is for a past time.", bookingTime);
+            throw new BookingBufferTimeNotMetException($"Bookings must be made at least {_bookingConfig.BufferForBooking} minutes in advance of the requested time.");
+        }
     }
 
     public async Task<bool> IsValidSimultaneousBookings(DateTime startTime, IBookingRepository bookingRepository)
@@ -57,9 +62,19 @@ public class BookingValidator : IBookingValidator
 
     private bool IsBookingAfterCurrentTime(TimeOnly bookingTime)
     {
-        var currentDateTime = _timeProvider.GetLocalNow().LocalDateTime;
-        var currentTimeOnly = TimeOnly.FromDateTime(currentDateTime);
-        return currentTimeOnly <= bookingTime;
+        var currentTime = GetCurrentTime();
+        return currentTime <= bookingTime;
     }
 
+    private bool IsWithinBufferTime(TimeOnly bookingTime)
+    {
+        var currentTime = GetCurrentTime();
+        return currentTime.AddMinutes(_bookingConfig.BufferForBooking) <= bookingTime;
+    }
+
+    private TimeOnly GetCurrentTime()
+    {
+        var currentDateTime = _timeProvider.GetLocalNow().LocalDateTime;
+        return TimeOnly.FromDateTime(currentDateTime);
+    }
 }

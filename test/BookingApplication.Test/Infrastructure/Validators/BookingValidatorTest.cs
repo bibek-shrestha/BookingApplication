@@ -43,6 +43,13 @@ public class BookingValidatorTest
     }
 
     [Fact]
+    public void ValidateBookingTime_OnBookingWithNotEnoughBuffer_ShouldThrowBookingBufferTimeNotMetException()
+    {
+        var bookingBufferTimeNotMetException = Assert.Throws<BookingBufferTimeNotMetException>(() => _bookingValidatorSut.ValidateBookingTime(new DateTime(2004, 8, 17, 10, 12, 0)));
+        Assert.NotNull(bookingBufferTimeNotMetException);
+    }
+
+    [Fact]
     public async Task ValidateSimultaneousBookings_OnSuccess_ReturnTrue()
     {
         var bookingDate = new DateTime(2004, 8, 17, 11, 0, 0);

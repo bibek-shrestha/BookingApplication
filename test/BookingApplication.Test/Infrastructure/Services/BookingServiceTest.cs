@@ -55,6 +55,15 @@ public class BookingServiceTest
     }
 
     [Fact]
+    public async Task CreateBooking_OnError_ForBookingWithNotEnoughBuffer_ShouldThrowBookingBufferTimeNotMetException()
+    {
+        var bookingRequest = RequestAndResponseBodyHelper.CreateBookingRequest();
+        _mockBookingValidator.Setup(validator => validator.ValidateBookingTime(It.IsAny<DateTime>())).Throws(new BookingBufferTimeNotMetException());
+        var bookingBufferTimeNotMetException = await Assert.ThrowsAsync<BookingBufferTimeNotMetException>(async () => await _bookingServiceSut.CreateBooking(bookingRequest));
+        Assert.NotNull(bookingBufferTimeNotMetException);
+    }
+
+    [Fact]
     public async Task CreateBooking_OnError_ForMoreThanMaximumSimultaneousBooking_ShouldThrowBookingCapacityExceededException()
     {
         var bookingRequest = RequestAndResponseBodyHelper.CreateBookingRequest();
