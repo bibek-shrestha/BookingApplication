@@ -11,31 +11,32 @@ namespace BookingApplication.Test.Infrastructure.Validators;
 public class BookingValidatorTest
 {
     private readonly Mock<ILogger<BookingValidator>> _mockLogger;
-    private readonly TimeProvider _fakeTimeProvider;
+    private readonly FakeTimeProvider _fakeTimeProvider;
     private readonly BookingValidator _bookingValidatorSut;
     public BookingValidatorTest()
     {
         _mockLogger = new Mock<ILogger<BookingValidator>>();
         _fakeTimeProvider = new FakeTimeProvider();
+        _fakeTimeProvider.SetUtcNow(new DateTimeOffset(new DateTime(2004, 8, 17, 10, 0, 0)));
         _bookingValidatorSut = new BookingValidator(_mockLogger.Object, _fakeTimeProvider);
     }
     [Fact]
     public void ValidateBookingTime_OnSuccess_ShouldRunWithoutException()
     {
-        _bookingValidatorSut.ValidateBookingTime(new DateTime(2024, 8, 17, 11, 0, 0));
+        _bookingValidatorSut.ValidateBookingTime(new DateTime(2004, 8, 17, 11, 0, 0));
     }
 
     [Fact]
-    public void ValidateBookingTime_OnOutOfHourBookings_ShouldThrowOutOfBusinessHoursBookingException()
+    public void ValidateBookingTime_OnOutOfBusinessHoursBooking_ShouldThrowOutOfBusinessHoursBookingException()
     {
-        var outOfBusinessHoursBookingException = Assert.Throws<OutOfBusinessHoursBookingException>(() => _bookingValidatorSut.ValidateBookingTime(new DateTime(2024, 8, 17, 8, 0, 0)));
+        var outOfBusinessHoursBookingException = Assert.Throws<OutOfBusinessHoursBookingException>(() => _bookingValidatorSut.ValidateBookingTime(new DateTime(2004, 8, 17, 8, 0, 0)));
         Assert.NotNull(outOfBusinessHoursBookingException);
     }
 
     [Fact]
-    public void ValidateBookingTime_OnOutOfHourBookings_ShouldThrowBookingBeforeCurrentTimeException()
+    public void ValidateBookingTime_OnBookingBeforeCurrentTIme_ShouldThrowBookingBeforeCurrentTimeException()
     {
-        var bookingBeforeCurrentTimeException = Assert.Throws<BookingBeforeCurrentTimeException>(() => _bookingValidatorSut.ValidateBookingTime(new DateTime(2024, 8, 17, 9, 0, 0)));
+        var bookingBeforeCurrentTimeException = Assert.Throws<BookingBeforeCurrentTimeException>(() => _bookingValidatorSut.ValidateBookingTime(new DateTime(2004, 8, 17, 9, 0, 0)));
         Assert.NotNull(bookingBeforeCurrentTimeException);
     }
 
