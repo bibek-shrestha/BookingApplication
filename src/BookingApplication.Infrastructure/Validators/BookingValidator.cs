@@ -1,0 +1,49 @@
+using System;
+using BookingApplication.Core.Repositories;
+using BookingApplication.Infrastructure.Exceptions;
+using Microsoft.Extensions.Logging;
+
+namespace BookingApplication.Infrastructure.Validators;
+
+public class BookingValidator : IBookingValidator
+{
+    private const string BUSINESS_HOURS_START_TIME = "09:00";
+    private const string BUSINESS_HOURS_END_TIME = "17:00";
+    private const int BOOKING_DURATION_IN_MINUTES = 59;
+    private readonly ILogger<BookingValidator> _logger;
+    private readonly TimeProvider _timeProvider;
+    public BookingValidator(ILogger<BookingValidator> logger, TimeProvider timeProvider)
+    {
+        _logger = logger;
+        _timeProvider = timeProvider;
+    }
+    public void ValidateBookingTime(DateTime bookingTime)
+    {
+        var currentDateTime = _timeProvider.GetLocalNow().LocalDateTime;
+        var currentTimeOnly = TimeOnly.FromDateTime(currentDateTime);
+        var bookingTimeOnly = TimeOnly.FromDateTime(bookingTime);
+        if (TimeOnly.Parse(BUSINESS_HOURS_END_TIME) < bookingTimeOnly || TimeOnly.Parse(BUSINESS_HOURS_START_TIME) > bookingTimeOnly)
+        {
+            _logger.LogWarning("Booking time ({BookingTime}) is outside business hours.", bookingTimeOnly);
+            throw new OutOfBusinessHoursBookingException("Booking cannot be created outside business hours.");
+        }
+        if (currentTimeOnly > bookingTimeOnly)
+        {
+            _logger.LogWarning("Booking time ({BookingTime}) is for a past time.", bookingTime);
+            throw new BookingBeforeCurrentTimeException("Booking for times before current time is not allowed.");
+        }
+    }
+
+    public async Task<bool> IsValidSimultaneousBookings(DateTime startTime, IBookingRepository bookingRepository)
+    {
+        var endTime = startTime.AddMinutes(BOOKING_DURATION_IN_MINUTES);
+        var numberOfSimultaneousBookings = await bookingRepository.CountSimultaneousBookings(startTime, endTime);
+        if (numberOfSimultaneousBookings > 3)
+        {
+            _logger.LogWarning("Booking conflict detected for booking at {StartTime} to {EndTime}. Number of simultaneous bookings: {ConflictCount}"
+               , startTime, endTime, numberOfSimultaneousBookings);
+            throw new BookingCapacityExceededException("Booking exceeds total number of simultaneous bookings.");
+        }
+        return true;
+    }
+}
