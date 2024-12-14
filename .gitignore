@@ -1,5 +1,6 @@
 .vscode
 .DS_Store
+*.db*
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/

@@ -1,21 +1,25 @@
 using System;
 using BookingApplication.Core.Repositories;
+using BookingApplication.Infrastructure.Configs;
 using BookingApplication.Infrastructure.Exceptions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BookingApplication.Infrastructure.Validators;
 
 public class BookingValidator : IBookingValidator
 {
-    private const string BUSINESS_HOURS_START_TIME = "09:00";
-    private const string BUSINESS_HOURS_END_TIME = "16:00";
-    private const int BOOKING_DURATION_IN_MINUTES = 59;
     private readonly ILogger<BookingValidator> _logger;
     private readonly TimeProvider _timeProvider;
-    public BookingValidator(ILogger<BookingValidator> logger, TimeProvider timeProvider)
+    private readonly BookingConfigOption _bookingConfig;
+    public BookingValidator(
+        ILogger<BookingValidator> logger,
+        TimeProvider timeProvider,
+        IOptions<BookingConfigOption> bookingConfig)
     {
         _logger = logger;
         _timeProvider = timeProvider;
+        _bookingConfig = bookingConfig.Value;
     }
     public void ValidateBookingTime(DateTime requestedBookingDateTime)
     {
@@ -23,7 +27,7 @@ public class BookingValidator : IBookingValidator
         if (!IsBookingWithInBusinessHours(bookingTime))
         {
             _logger.LogWarning("Booking time ({BookingTime}) is outside business hours.", bookingTime);
-            throw new OutOfBusinessHoursBookingException($"Bookings can only be made during business hours. Please choose a time within the designated hours of operation ({BUSINESS_HOURS_START_TIME} - {BUSINESS_HOURS_END_TIME}).");
+            throw new OutOfBusinessHoursBookingException($"Bookings can only be made during business hours. Please choose a time within the designated hours of operation ({_bookingConfig.BusinessHoursStartTime} - {_bookingConfig.BusinessHoursEndTime}).");
         }
         if (!IsBookingAfterCurrentTime(bookingTime))
         {
@@ -34,7 +38,7 @@ public class BookingValidator : IBookingValidator
 
     public async Task<bool> IsValidSimultaneousBookings(DateTime startTime, IBookingRepository bookingRepository)
     {
-        var endTime = startTime.AddMinutes(BOOKING_DURATION_IN_MINUTES);
+        var endTime = startTime.AddMinutes(_bookingConfig.BookingDuration);
         var numberOfSimultaneousBookings = await bookingRepository.CountSimultaneousBookings(startTime, endTime);
         if (numberOfSimultaneousBookings > 3)
         {
@@ -47,8 +51,8 @@ public class BookingValidator : IBookingValidator
 
     private bool IsBookingWithInBusinessHours(TimeOnly bookingTime)
     {
-        return TimeOnly.Parse(BUSINESS_HOURS_END_TIME) >= bookingTime
-        && TimeOnly.Parse(BUSINESS_HOURS_START_TIME) <= bookingTime;
+        return TimeOnly.Parse(_bookingConfig.BusinessHoursEndTime).AddHours(BookingConfigConstants.HOURS_BEFORE_LAST_BOOKING) >= bookingTime
+        && TimeOnly.Parse(_bookingConfig.BusinessHoursStartTime) <= bookingTime;
     }
 
     private bool IsBookingAfterCurrentTime(TimeOnly bookingTime)
@@ -57,4 +61,5 @@ public class BookingValidator : IBookingValidator
         var currentTimeOnly = TimeOnly.FromDateTime(currentDateTime);
         return currentTimeOnly <= bookingTime;
     }
+
 }

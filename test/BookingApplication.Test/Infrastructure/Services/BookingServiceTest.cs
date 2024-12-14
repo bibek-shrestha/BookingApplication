@@ -6,6 +6,10 @@ using BookingApplication.Infrastructure.Exceptions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using BookingApplication.Test.API.Helpers;
+using BookingApplication.Infrastructure.Configs;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using BookingApplication.Test.Infrastructure.Helpers;
 
 namespace BookingApplication.Test.Infrastructure.Services;
 
@@ -17,10 +21,11 @@ public class BookingServiceTest
     private readonly BookingService _bookingServiceSut;
     public BookingServiceTest()
     {
+        var options = BookingConfigOptionHelper.configureBookingOption();
         _mockLogger = new Mock<ILogger<BookingService>>();
         _mockBookingRepository = new Mock<IBookingRepository>();
         _mockBookingValidator = new Mock<IBookingValidator>();
-        _bookingServiceSut = new BookingService(_mockLogger.Object, _mockBookingRepository.Object, _mockBookingValidator.Object);
+        _bookingServiceSut = new BookingService(_mockLogger.Object, _mockBookingRepository.Object, _mockBookingValidator.Object, options);
     }
 
     [Fact]
@@ -57,5 +62,4 @@ public class BookingServiceTest
         var bookingCapacityExceededException = await Assert.ThrowsAsync<BookingCapacityExceededException>(async () => await _bookingServiceSut.CreateBooking(bookingRequest));
         Assert.NotNull(bookingCapacityExceededException);
     }
-
 }

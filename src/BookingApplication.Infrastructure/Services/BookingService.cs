@@ -2,10 +2,12 @@ using System;
 using System.Globalization;
 using BookingApplication.Core.Entities;
 using BookingApplication.Core.Repositories;
+using BookingApplication.Infrastructure.Configs;
 using BookingApplication.Infrastructure.Exceptions;
 using BookingApplication.Infrastructure.Models;
 using BookingApplication.Infrastructure.Validators;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BookingApplication.Infrastructure.Services;
 
@@ -14,15 +16,18 @@ public class BookingService : IBookingService
     private readonly ILogger<BookingService> _logger;
     private readonly IBookingRepository _bookingRepository;
     private readonly IBookingValidator _bookingValidator;
+    private readonly BookingConfigOption _bookingConfig;
 
     public BookingService(
         ILogger<BookingService> logger,
         IBookingRepository bookingRepository,
-        IBookingValidator bookingValidator)
+        IBookingValidator bookingValidator,
+        IOptions<BookingConfigOption> bookingConfig)
     {
         _logger = logger;
         _bookingRepository = bookingRepository;
         _bookingValidator = bookingValidator;
+        _bookingConfig = bookingConfig.Value;
     }
     public async Task<BookingResponseDto> CreateBooking(BookingCreationDto bookingRequest)
     {
@@ -46,7 +51,8 @@ public class BookingService : IBookingService
             throw;
         }
         _logger.LogInformation("Creating a booking for '{Name}' at {BookingTime}.", bookingRequest.Name, bookingTime);
-        var newBooking = new Booking(bookingTime, bookingRequest.Name);
+        var endTime = bookingTime.AddMinutes(_bookingConfig.BookingDuration);
+        var newBooking = new Booking(bookingTime, endTime, bookingRequest.Name);
         _bookingRepository.AddBooking(newBooking);
         await _bookingRepository.SaveChangesAsync();
         _logger.LogInformation("Successfully created a booking for '{Name}' at {BookingTime} with ID {BookingId}.", bookingRequest.Name, bookingTime, newBooking.Id);

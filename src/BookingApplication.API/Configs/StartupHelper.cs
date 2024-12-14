@@ -1,5 +1,6 @@
 using System;
 using BookingApplication.Core.Repositories;
+using BookingApplication.Infrastructure.Configs;
 using BookingApplication.Infrastructure.Contexts;
 using BookingApplication.Infrastructure.Repositories;
 using BookingApplication.Infrastructure.Services;
@@ -20,6 +21,7 @@ public static class StartupHelper
             options.UseSqlite(connectionString, x => x.MigrationsAssembly("BookingApplication.API"));
 
         });
+        services.Configure<BookingConfigOption>(configuration.GetSection(BookingConfigOption.BookingConfig));
         services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddTransient<IBookingValidator, BookingValidator>();
         services.AddTransient<IBookingService, BookingService>();

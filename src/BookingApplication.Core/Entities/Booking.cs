@@ -13,11 +13,11 @@ public class Booking
     [Required]
     public string Name { get; set; } = string.Empty;
 
-    public Booking(DateTime startTime, string name)
+    public Booking(DateTime startTime, DateTime endTime, string name)
     {
         Id = Guid.NewGuid();
         StartTime = startTime;
-        EndTime = StartTime.AddMinutes(59);
+        EndTime = endTime;
         Name = name;
     }
 

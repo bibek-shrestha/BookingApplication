@@ -2,6 +2,7 @@ using System;
 using BookingApplication.Core.Repositories;
 using BookingApplication.Infrastructure.Exceptions;
 using BookingApplication.Infrastructure.Validators;
+using BookingApplication.Test.Infrastructure.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Time.Testing;
 using Moq;
@@ -15,10 +16,11 @@ public class BookingValidatorTest
     private readonly BookingValidator _bookingValidatorSut;
     public BookingValidatorTest()
     {
+        var options = BookingConfigOptionHelper.configureBookingOption();
         _mockLogger = new Mock<ILogger<BookingValidator>>();
         _fakeTimeProvider = new FakeTimeProvider();
         _fakeTimeProvider.SetUtcNow(new DateTimeOffset(new DateTime(2004, 8, 17, 10, 0, 0)));
-        _bookingValidatorSut = new BookingValidator(_mockLogger.Object, _fakeTimeProvider);
+        _bookingValidatorSut = new BookingValidator(_mockLogger.Object, _fakeTimeProvider, options);
     }
     [Fact]
     public void ValidateBookingTime_OnSuccess_ShouldRunWithoutException()
