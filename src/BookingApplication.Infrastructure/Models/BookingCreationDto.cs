@@ -1,12 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using BookingApplication.Infrastructure.ValidationAttributes;
 
 namespace BookingApplication.Infrastructure.Models;
 
 public class BookingCreationDto
 {
     [Required]
-    [Timestamp]
+    [BookingTImeFormat]
     public string BookingTime { get; set; }
 
     [Required]
