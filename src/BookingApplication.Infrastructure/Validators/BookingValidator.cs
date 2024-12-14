@@ -23,12 +23,12 @@ public class BookingValidator : IBookingValidator
         if (!IsBookingWithInBusinessHours(bookingTime))
         {
             _logger.LogWarning("Booking time ({BookingTime}) is outside business hours.", bookingTime);
-            throw new OutOfBusinessHoursBookingException("Booking cannot be created outside business hours.");
+            throw new OutOfBusinessHoursBookingException($"Bookings can only be made during business hours. Please choose a time within the designated hours of operation ({BUSINESS_HOURS_START_TIME} - {BUSINESS_HOURS_END_TIME}).");
         }
         if (!IsBookingAfterCurrentTime(bookingTime))
         {
             _logger.LogWarning("Booking time ({BookingTime}) is for a past time.", bookingTime);
-            throw new BookingBeforeCurrentTimeException("Booking for times before current time is not allowed.");
+            throw new BookingBeforeCurrentTimeException("Booking cannot be made for a time in the past. Please select a future time for your booking.");
         }
     }
 
@@ -40,7 +40,7 @@ public class BookingValidator : IBookingValidator
         {
             _logger.LogWarning("Booking conflict detected for booking at {StartTime} to {EndTime}. Number of simultaneous bookings: {ConflictCount}"
                , startTime, endTime, numberOfSimultaneousBookings);
-            throw new BookingCapacityExceededException("Booking exceeds total number of simultaneous bookings.");
+            throw new BookingCapacityExceededException("The booking exceeds the available capacity for this time. Please select a different time.");
         }
         return true;
     }

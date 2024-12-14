@@ -32,7 +32,7 @@ public class BookingServiceTest
     }
 
     [Fact]
-    public async Task CreateBooking_OnError_ForOutOfHoursBooking_ShouldThrowOutOfBusinessHoursBookingException()
+    public async Task CreateBooking_OnError_ForOutOfBusinessHoursBooking_ShouldThrowOutOfBusinessHoursBookingException()
     {
         var bookingRequest = RequestAndResponseBodyHelper.CreateBookingRequest();
         _mockBookingValidator.Setup(validator => validator.ValidateBookingTime(It.IsAny<DateTime>())).Throws(new OutOfBusinessHoursBookingException());
@@ -41,7 +41,7 @@ public class BookingServiceTest
     }
 
     [Fact]
-    public async Task CreateBooking_OnError_ForBookingTimeForPast_ShouldThrowBookingBeforeCurrentTimeException()
+    public async Task CreateBooking_OnError_ForBookingTimeInPast_ShouldThrowBookingBeforeCurrentTimeException()
     {
         var bookingRequest = RequestAndResponseBodyHelper.CreateBookingRequest();
         _mockBookingValidator.Setup(validator => validator.ValidateBookingTime(It.IsAny<DateTime>())).Throws(new BookingBeforeCurrentTimeException());
