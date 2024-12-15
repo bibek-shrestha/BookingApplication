@@ -82,4 +82,6 @@ Following table shows properties in `appsettings.json` under `Booking` property 
 
 >_Please change the request body in the postman collection to suit the time of day or tweak the `Timeprovider` in `Program.cs`_
 
+## Database Used
+The application is configured with Sqlite. A new .db file is created and migration is run everytime the application is restarted. The testing is done using in-memory version of Sqlite.
 
