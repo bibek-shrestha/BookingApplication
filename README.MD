@@ -85,3 +85,5 @@ Following table shows properties in `appsettings.json` under `Booking` property 
 ## Database Used
 The application is configured with Sqlite. A new .db file is created and migration is run everytime the application is restarted. The testing is done using in-memory version of Sqlite.
 
+>_Migration might fail due to permission issues._
+
