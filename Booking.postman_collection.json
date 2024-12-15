@@ -1,0 +1,1180 @@
+{
+	"info": {
+		"_postman_id": "85d9e5e5-7a86-4f6d-98b0-27b9c3cbf463",
+		"name": "Booking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1267634"
+	},
+	"item": [
+		{
+			"name": "Valid Request Body",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"15:00\",\n    \"name\": \"John Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Invalid Request Body",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": 1,\n    \"name\": \"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Invalid Request Body",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": 1,\n    \"name\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "90",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:02:40 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Name\": [\n        \"Name is Required.\"\n    ],\n    \"BookingTime\": [\n        \"Booking Time must be in the format HH:mm.\"\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Invalid Booking Time Format in Request Body",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"1450\",\n    \"name\": \"John\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Invalid Booking Time Format in Request Body",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": \"1450\",\n    \"name\": \"John\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "61",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:06:01 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"BookingTime\": [\n        \"Booking Time must be in the format HH:mm.\"\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Booking Outside Business Hours (Before 9:00am in morning)",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"08:00\",\n    \"name\": \"John Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Booking Outside Business Hours (Before 9:00am in morning)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": \"08:00\",\n    \"name\": \"John Doe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "139",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:18:40 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Bookings can only be made during business hours. Please choose a time within the designated hours of operation (09:00 - 16:00).\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Booking Outside Business Hours (After 17:00am in afternoon)",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"18:00\",\n    \"name\": \"John Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Booking Outside Business Hours (After 17:00am in afternoon)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": \"18:00\",\n    \"name\": \"John Doe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "139",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:19:59 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Bookings can only be made during business hours. Please choose a time within the designated hours of operation (09:00 - 16:00).\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Booking Outside Business Hours (Latest Booking till 16:00)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"16:01\",\n    \"name\": \"John Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Booking Outside Business Hours (Latest Booking till 16:00)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": \"16:01\",\n    \"name\": \"John Doe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "139",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:27:51 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Bookings can only be made during business hours. Please choose a time within the designated hours of operation (09:00 - 16:00).\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Booking Before Current Time",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"15:00\",\n    \"name\": \"John Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Booking Before Current Time",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": \"15:00\",\n    \"name\": \"John Doe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "104",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:29:11 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Booking cannot be made for a time in the past. Please select a future time for your booking.\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Booking Time At least 15 min after current time validation",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"21:40\",\n    \"name\": \"John Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Booking Time At least 15 min after current time validation",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": \"21:40\",\n    \"name\": \"John Doe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "139",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:31:45 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Bookings can only be made during business hours. Please choose a time within the designated hours of operation (09:00 - 16:00).\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Simultaneous Booking (Booking 1 valid)",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"11:00\",\n    \"name\": \"John Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Simultaneous Booking (Booking 1 valid)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": \"11:10\",\n    \"name\": \"John Doe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "52",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:34:14 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"bookingId\": \"e30ce672-f386-439d-8be3-cbeb02f57db2\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Simultaneous Booking (Booking 2 valid)",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"11:10\",\n    \"name\": \"John Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Simultaneous Booking (Booking 2 valid)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": \"11:10\",\n    \"name\": \"John Doe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "52",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:35:06 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"bookingId\": \"cc754ca3-04b9-43bf-8cce-25f4c44cd0fc\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Simultaneous Booking (Booking 3 valid)",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"11:15\",\n    \"name\": \"John Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Simultaneous Booking (Booking 3 valid)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": \"11:15\",\n    \"name\": \"John Doe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "52",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:35:46 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"bookingId\": \"62b993d0-93e4-42a3-ad8c-917e95ef280e\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Simultaneous Booking (Booking 4 valid)",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"12:00\",\n    \"name\": \"John Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Simultaneous Booking (Booking 4 valid)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": \"12:00\",\n    \"name\": \"John Doe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "52",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:36:37 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"bookingId\": \"43994c8f-5fc2-4f50-9019-4946aaa9759c\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Simultaneous Booking (Booking 5 valid)",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"11:30\",\n    \"name\": \"John Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Simultaneous Booking (Booking 5 valid)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": \"11:30\",\n    \"name\": \"John Doe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "52",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:37:08 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"bookingId\": \"4fad84d8-e60c-4658-bd58-88f58968c271\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Simultaneous Booking (Booking 6 Invalid)",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingTime\": \"11:20\",\n    \"name\": \"John Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7125/api/bookings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7125",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Simultaneous Booking (Booking 6 Invalid)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bookingTime\": \"11:20\",\n    \"name\": \"John Doe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7125/api/bookings",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7125",
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"status": "Conflict",
+					"code": 409,
+					"_postman_previewlanguage": "JSON",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "101",
+							"type": "text"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"type": "text"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 15 Dec 2024 10:39:09 GMT",
+							"type": "text"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"The booking exceeds the available capacity for this time. Please select a different time.\"\n}"
+				}
+			]
+		}
+	]
+}
