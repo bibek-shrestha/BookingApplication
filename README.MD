@@ -56,4 +56,30 @@ A Postman collection is included in the root folder of the project.
 
 The requests are configured for HTTPS server and port. If you are running the application in HTTP server, please change the protocol and port you are using.
 
+## Application Configurations / Assumptions
+Following are some of the **assumptions** made during the application development.
+* Business hours are configurable.
+* Booking durataions are configurable.
+* Latest booking time is configurable.
+* A booking buffer is required which is configurable, so that the user cannot make immediate bookings. _i.e. User has to book time that is at least 15 minutes after current time._
+* Maximum number of simultaneous bookings are also configurable.
+* Bookings cannot be made for a time slot in past.
+
+Following table shows properties in `appsettings.json` under `Booking` property to configure the configurable properties.
+
+| Properties        | Description           | DataType           | Default  |
+| ------------- |:-------------:|:-------------:| -----:|
+| BusinessHoursStartTime    | Start of the business hours | string | "09:00" |
+| BusinessHoursEndTime      | End of the business hours      | string      |   "17:00" |
+| TimeBeforeBusinessHoursForLastBooking | How many minutes before the end of business hours the last booking can be done      | int (minutes)      |    60 |
+| BufferForBooking      | Amount of buffer time required after current time for new booking.      | int (minutes)      |   15 |
+| BookingDuration      | Duration of a booking      | int (minutes)      |  59 |
+| MaximumSimultaneousBookings      | Maximum number of simultaneous bookings alllowed      | int      |   4 |
+
+>_Please change these settings according to your needs._
+
+>_Application might always give an error saying **Booking cannot be made for a time in the past. Please select a future time for your booking.** based on the time of the days the applciation is used as it runs based on current time._
+
+>_Please change the request body in the postman collection to suit the time of day or tweak the `Timeprovider` in `Program.cs`_
+
 
