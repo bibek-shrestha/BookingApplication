@@ -67,6 +67,7 @@ public class BookingRepositoryTest : IDisposable
     [Fact]
     public async void Given_ValidStartAndEndTime_When_GetBookingsForTimeRangeAsyncIsCalled_Then_LessThan4IsReturned()
     {
+        //arrange
         var firstBooking = new Booking(new DateTime(2004, 8, 17, 10, 0, 0), new DateTime(2004, 8, 17, 10, 59, 0), "John Smith", Convener.FIRST_CONVENER);
         var secondBooking = new Booking(new DateTime(2004, 8, 17, 10, 0, 0), new DateTime(2004, 8, 17, 10, 59, 0), "John Smith", Convener.SECOND_CONVENER);
         var thirdBooking = new Booking(new DateTime(2004, 8, 17, 10, 0, 0), new DateTime(2004, 8, 17, 10, 59, 0), "John Smith", Convener.THIRD_CONVENER);
@@ -80,14 +81,18 @@ public class BookingRepositoryTest : IDisposable
 
         var startTime = new DateTime(2004, 8, 17, 10, 0, 0);
         var endTime = new DateTime(2004, 8, 17, 10, 59, 0);
-
+        
+        // act
         var availableConveners = await _bookingRepository.GetBookingsForTimeRangeAsync(startTime, endTime);
+
+        //assert
         Assert.Equal(3, availableConveners.Count());
     }
 
     [Fact]
     public async void Given_ValidStartAndEndTime_ForEdgeCase_When_GetBookingsForTimeRangeAsyncIsCalled_Then_LessThan4IsReturned()
     {
+        //arrange
         var firstBooking = new Booking(new DateTime(2004, 8, 17, 14, 0, 0), new DateTime(2004, 8, 17, 14, 59, 0), "John Smith", Convener.FIRST_CONVENER);
         var secondBooking = new Booking(new DateTime(2004, 8, 17, 14, 10, 0), new DateTime(2004, 8, 17, 15, 09, 0), "John Smith", Convener.SECOND_CONVENER);
         var fourthBooking = new Booking(new DateTime(2004, 8, 17, 15, 0, 0), new DateTime(2004, 8, 17, 15, 59, 0), "John Smith", Convener.FIRST_CONVENER);
@@ -99,14 +104,18 @@ public class BookingRepositoryTest : IDisposable
 
         var startTime = new DateTime(2004, 8, 17, 14, 30, 0);
         var endTime = new DateTime(2004, 8, 17, 15, 29, 0);
-
+        
+        //act
         var availableConveners = await _bookingRepository.GetBookingsForTimeRangeAsync(startTime, endTime);
+        
+        //assert
         Assert.Equal(3, availableConveners.Count());
     }
 
     [Fact]
     public async void Given_OverlappingStartAndEndTime_When_GetBookingsForTimeRangeAsyncIsCalled_Then_GreaterThan4IsReturned()
     {
+        //arrange
         var firstBooking = new Booking(new DateTime(2004, 8, 17, 10, 0, 0), new DateTime(2004, 8, 17, 10, 59, 0), "John Smith", Convener.FIRST_CONVENER);
         var secondBooking = new Booking(new DateTime(2004, 8, 17, 10, 0, 0), new DateTime(2004, 8, 17, 10, 59, 0), "John Smith", Convener.SECOND_CONVENER);
         var thirdBooking = new Booking(new DateTime(2004, 8, 17, 10, 0, 0), new DateTime(2004, 8, 17, 10, 59, 0), "John Smith", Convener.THIRD_CONVENER);
@@ -120,14 +129,18 @@ public class BookingRepositoryTest : IDisposable
 
         var startTime = new DateTime(2004, 8, 17, 10, 0, 0);
         var endTime = new DateTime(2004, 8, 17, 10, 59, 0);
-
+        
+        //act
         var availableConveners = await _bookingRepository.GetBookingsForTimeRangeAsync(startTime, endTime);
+
+        //assert
         Assert.Equal(4, availableConveners.Count());
     }
 
     [Fact]
     public async void Given_ValidStartAndEndTime_ForEdgeCase1_When_GetBookingsForTimeRangeAsyncIsCalled_Then_LessThan4IsReturned()
     {
+        //arrange
         var firstBooking = new Booking(new DateTime(2004, 8, 17, 14, 0, 0), new DateTime(2004, 8, 17, 14, 59, 0), "John Smith", Convener.FIRST_CONVENER);
         var secondBooking = new Booking(new DateTime(2004, 8, 17, 14, 0, 0), new DateTime(2004, 8, 17, 14, 59, 0), "John Smith", Convener.SECOND_CONVENER);
         var thirdBooking = new Booking(new DateTime(2004, 8, 17, 14, 45, 0), new DateTime(2004, 8, 17, 15, 44, 0), "John Smith", Convener.THIRD_CONVENER);
@@ -141,8 +154,11 @@ public class BookingRepositoryTest : IDisposable
 
         var startTime = new DateTime(2004, 8, 17, 14, 30, 0);
         var endTime = new DateTime(2004, 8, 17, 15, 29, 0);
-
+        
+        //act
         var availableConveners = await _bookingRepository.GetBookingsForTimeRangeAsync(startTime, endTime);
+
+        //assert
         Assert.Equal(4, availableConveners.Count());
     }
 

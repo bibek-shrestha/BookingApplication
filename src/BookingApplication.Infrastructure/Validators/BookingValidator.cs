@@ -47,7 +47,7 @@ public class BookingValidator : IBookingValidator
         var endTime = startTime.AddMinutes(_bookingConfig.BookingDuration);
         var numberOfSimultaneousBookings = await bookingRepository.GetBookingsForTimeRangeAsync(startTime, endTime);
         var unavailableConveners = numberOfSimultaneousBookings.Select(booking => booking.Convener).Distinct();
-        if (unavailableConveners.Count() == 4)
+        if (unavailableConveners.Count() == _bookingConfig.MaximumSimultaneousBookings)
         {
             _logger.LogWarning("Booking conflict detected for booking at {StartTime} to {EndTime}. Number of simultaneous bookings: {ConflictCount}"
                , startTime, endTime, numberOfSimultaneousBookings);
