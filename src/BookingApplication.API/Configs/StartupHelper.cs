@@ -2,9 +2,11 @@ using System;
 using BookingApplication.Core.Repositories;
 using BookingApplication.Infrastructure.Configs;
 using BookingApplication.Infrastructure.Contexts;
+using BookingApplication.Infrastructure.ModelValidators;
 using BookingApplication.Infrastructure.Repositories;
 using BookingApplication.Infrastructure.Services;
 using BookingApplication.Infrastructure.Validators;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookingApplication.API.Configs;
@@ -13,7 +15,7 @@ public static class StartupHelper
 {
     public static IServiceCollection ConfigureAppServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddControllers();
+        services.AddControllers().AddNewtonsoftJson();
         services.AddSingleton<TimeProvider>(TimeProvider.System);
         services.AddDbContext<BookingContext>(options =>
         {
@@ -22,6 +24,7 @@ public static class StartupHelper
 
         });
         services.Configure<BookingConfigOption>(configuration.GetSection(BookingConfigOption.BookingConfig));
+        services.AddValidatorsFromAssemblyContaining<BookingCreationValidator>();
         services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddTransient<IBookingValidator, BookingValidator>();
         services.AddTransient<IBookingService, BookingService>();
