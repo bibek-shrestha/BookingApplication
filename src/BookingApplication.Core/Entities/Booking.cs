@@ -13,12 +13,16 @@ public class Booking
     [Required]
     public string Name { get; set; } = string.Empty;
 
-    public Booking(DateTime startTime, DateTime endTime, string name)
+    [Required]
+    public Convener Convener {get; set; }
+
+    public Booking(DateTime startTime, DateTime endTime, string name, Convener convener)
     {
         Id = Guid.NewGuid();
         StartTime = startTime;
         EndTime = endTime;
         Name = name;
+        Convener = convener;
     }
 
 }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingApplication.API.Migrations
 {
     [DbContext(typeof(BookingContext))]
-    [Migration("20241214015636_InitialMigration")]
+    [Migration("20241215054939_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -25,6 +25,9 @@ namespace BookingApplication.API.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Convener")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("TEXT");

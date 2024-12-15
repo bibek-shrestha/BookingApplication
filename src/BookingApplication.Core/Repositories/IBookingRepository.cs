@@ -6,7 +6,7 @@ public interface IBookingRepository
 {
     void AddBooking(Booking booking);
 
-    Task<int> CountSimultaneousBookings(DateTime startTime, DateTime endTime);
+    Task<IEnumerable<Booking>> GetBookingsForTimeRangeAsync(DateTime startTime, DateTime endTime);
 
     Task<int> SaveChangesAsync();
 }

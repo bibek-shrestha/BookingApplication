@@ -82,7 +82,7 @@ public class BookingServiceTest
     {
         //Arrange
         var bookingRequest = RequestAndResponseBodyHelper.CreateBookingRequest();
-        _mockBookingValidator.Setup(validator => validator.IsValidSimultaneousBookings(It.IsAny<DateTime>(), It.IsAny<IBookingRepository>())).ThrowsAsync(new BookingCapacityExceededException());
+        _mockBookingValidator.Setup(validator => validator.ValidateSimultaneousBookingAndGetAvailableConvenors(It.IsAny<DateTime>(), It.IsAny<IBookingRepository>())).ThrowsAsync(new BookingCapacityExceededException());
 
         //Act and Assert
         var bookingCapacityExceededException = await Assert.ThrowsAsync<BookingCapacityExceededException>(async () => await _bookingServiceSut.CreateBooking(bookingRequest));

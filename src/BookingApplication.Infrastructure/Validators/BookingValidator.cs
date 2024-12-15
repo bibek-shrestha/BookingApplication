@@ -1,4 +1,5 @@
 using System;
+using BookingApplication.Core.Entities;
 using BookingApplication.Core.Repositories;
 using BookingApplication.Infrastructure.Configs;
 using BookingApplication.Infrastructure.Exceptions;
@@ -41,22 +42,24 @@ public class BookingValidator : IBookingValidator
         }
     }
 
-    public async Task<bool> IsValidSimultaneousBookings(DateTime startTime, IBookingRepository bookingRepository)
+    public async Task<IEnumerable<Convener>> ValidateSimultaneousBookingAndGetAvailableConvenors(DateTime startTime, IBookingRepository bookingRepository)
     {
         var endTime = startTime.AddMinutes(_bookingConfig.BookingDuration);
-        var numberOfSimultaneousBookings = await bookingRepository.CountSimultaneousBookings(startTime, endTime);
-        if (numberOfSimultaneousBookings > 3)
+        var numberOfSimultaneousBookings = await bookingRepository.GetBookingsForTimeRangeAsync(startTime, endTime);
+        var unavailableConveners = numberOfSimultaneousBookings.Select(booking => booking.Convener).Distinct();
+        if (unavailableConveners.Count() == 4)
         {
             _logger.LogWarning("Booking conflict detected for booking at {StartTime} to {EndTime}. Number of simultaneous bookings: {ConflictCount}"
                , startTime, endTime, numberOfSimultaneousBookings);
             throw new BookingCapacityExceededException("The booking exceeds the available capacity for this time. Please select a different time.");
         }
-        return true;
+        return Enum.GetValues(typeof(Convener)).Cast<Convener>()
+            .Where(c => !unavailableConveners.Contains(c)).ToList();
     }
 
     private bool IsBookingWithInBusinessHours(TimeOnly bookingTime)
     {
-        return TimeOnly.Parse(_bookingConfig.BusinessHoursEndTime).AddHours(BookingConfigConstants.HOURS_BEFORE_LAST_BOOKING) >= bookingTime
+        return TimeOnly.Parse(_bookingConfig.BusinessHoursEndTime).AddMinutes(-_bookingConfig.TimeBeforeBusinessHoursForLastBooking) >= bookingTime
         && TimeOnly.Parse(_bookingConfig.BusinessHoursStartTime) <= bookingTime;
     }
 

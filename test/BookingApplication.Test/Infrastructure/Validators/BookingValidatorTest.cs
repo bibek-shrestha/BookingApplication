@@ -1,4 +1,5 @@
 using System;
+using BookingApplication.Core.Entities;
 using BookingApplication.Core.Repositories;
 using BookingApplication.Infrastructure.Exceptions;
 using BookingApplication.Infrastructure.Validators;
@@ -55,31 +56,45 @@ public class BookingValidatorTest
     }
 
     [Fact]
-    public async Task Given_ValidBookingDateAndSimultaneousBookings_When_IsValidSimultaneousBookingsIsCalled_Then_ReturnsTrue()
+    public async Task Given_ValidBookingDateAndNoSimultaneousBookings_When_GetBookingsForTimeRangeAsyncIsCalled_Then_ReturnsAllFourConvenors()
     {
         //Arrange
         var bookingDate = new DateTime(2004, 8, 17, 11, 0, 0);
         var mockBookingRepository = new Mock<IBookingRepository>();
-        mockBookingRepository.Setup(bookingRepository => bookingRepository.CountSimultaneousBookings(It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(3);
+        mockBookingRepository.
+            Setup(bookingRepository =>
+                bookingRepository.GetBookingsForTimeRangeAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>())
+            ).ReturnsAsync(new List<Booking>());
 
         //Act
-        var isValid = await _bookingValidatorSut.IsValidSimultaneousBookings(bookingDate, mockBookingRepository.Object);
+        var availableConvenors = await _bookingValidatorSut.ValidateSimultaneousBookingAndGetAvailableConvenors(bookingDate, mockBookingRepository.Object);
 
         //Assert
-        Assert.True(isValid);
+        Assert.Equal(4, availableConvenors.Count());
     }
 
     [Fact]
-    public async Task Given_BookingDateWithExcessSimultaneousBookings_When_IsValidSimultaneousBookingsIsCalled_Then_ThrowsBookingCapacityExceededException()
+    public async Task Given_BookingDateWithExcessSimultaneousBookings_When_GetBookingsForTimeRangeAsyncsIsCalled_Then_ThrowsBookingCapacityExceededException()
     {
         //Arrange
         var bookingDate = new DateTime(2004, 8, 17, 11, 0, 0);
         var mockBookingRepository = new Mock<IBookingRepository>();
-        mockBookingRepository.Setup(bookingRepository => bookingRepository.CountSimultaneousBookings(It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(4);
+        mockBookingRepository.Setup(bookingRepository => bookingRepository.GetBookingsForTimeRangeAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        .ReturnsAsync(GetTestBookedBookings());
 
         //Act and Assert
-        var bookingCapacityExceededException = await Assert.ThrowsAsync<BookingCapacityExceededException>(async () => await _bookingValidatorSut.IsValidSimultaneousBookings(bookingDate, mockBookingRepository.Object));
+        var bookingCapacityExceededException = await Assert.ThrowsAsync<BookingCapacityExceededException>(async () => await _bookingValidatorSut.ValidateSimultaneousBookingAndGetAvailableConvenors(bookingDate, mockBookingRepository.Object));
         Assert.NotNull(bookingCapacityExceededException);
+    }
+
+    private IEnumerable<Booking> GetTestBookedBookings()
+    {
+        return new List<Booking> {
+            new Booking(new DateTime(2004, 8, 17, 10, 0, 0), new DateTime(2004, 8, 17, 10, 59, 0), "John Smith", Convener.FIRST_CONVENER),
+            new Booking(new DateTime(2004, 8, 17, 10, 0, 0), new DateTime(2004, 8, 17, 10, 59, 0), "John Smith", Convener.SECOND_CONVENER),
+            new Booking(new DateTime(2004, 8, 17, 10, 0, 0), new DateTime(2004, 8, 17, 10, 59, 0), "John Smith", Convener.THIRD_CONVENER),
+            new Booking(new DateTime(2004, 8, 17, 10, 0, 0), new DateTime(2004, 8, 17, 10, 59, 0), "John Smith", Convener.FOURTH_CONVENER)
+        };
     }
 
 }

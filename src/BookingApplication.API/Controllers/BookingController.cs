@@ -13,7 +13,7 @@ public class BookingController : ControllerBase
     private readonly ILogger<BookingController> _logger;
 
     private readonly IBookingService _bookingService;
-    
+
     private readonly IValidator<BookingCreationDto> _validator;
 
     public BookingController(
@@ -40,21 +40,17 @@ public class BookingController : ControllerBase
             var bookingResponseDto = await _bookingService.CreateBooking(bookingRequest);
             return Ok(bookingResponseDto);
         }
-        catch (OutOfBusinessHoursBookingException ex)
+        catch (BookingException ex)
+            when (
+                ex is OutOfBusinessHoursBookingException ||
+                ex is BookingBeforeCurrentTimeException ||
+                ex is BookingBufferTimeNotMetException)
         {
-            return BadRequest(ex.Message);
-        }
-        catch (BookingBeforeCurrentTimeException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (BookingBufferTimeNotMetException ex)
-        {
-            return BadRequest(ex.Message);
+            return BadRequest(new { error = ex.Message });
         }
         catch (BookingCapacityExceededException ex)
         {
-            return Conflict(ex.Message);
+            return Conflict(new { error = ex.Message });
         }
     }
 }

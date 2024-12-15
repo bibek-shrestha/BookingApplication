@@ -31,12 +31,13 @@ public class BookingService : IBookingService
     }
     public async Task<BookingResponseDto> CreateBooking(BookingCreationDto bookingRequest)
     {
-        var bookingTime = DateTime.ParseExact(bookingRequest.BookingTime, "HH:mm", CultureInfo.InvariantCulture);
+        var bookingTime = ParseBookingTime(bookingRequest.BookingTime);
+        IEnumerable<Convener> availableConveners;
         try
         {
             _logger.LogDebug("Validating booking for {Name} at {BookingTime}.", bookingRequest.Name, bookingTime);
             _bookingValidator.ValidateBookingTime(bookingTime);
-            await _bookingValidator.IsValidSimultaneousBookings(bookingTime, _bookingRepository);
+            availableConveners = await _bookingValidator.ValidateSimultaneousBookingAndGetAvailableConvenors(bookingTime, _bookingRepository);
         }
         catch (OutOfBusinessHoursBookingException)
         {
@@ -50,12 +51,30 @@ public class BookingService : IBookingService
         {
             throw;
         }
-        _logger.LogInformation("Creating a booking for '{Name}' at {BookingTime}.", bookingRequest.Name, bookingTime);
-        var endTime = bookingTime.AddMinutes(_bookingConfig.BookingDuration);
-        var newBooking = new Booking(bookingTime, endTime, bookingRequest.Name);
-        _bookingRepository.AddBooking(newBooking);
-        await _bookingRepository.SaveChangesAsync();
-        _logger.LogInformation("Successfully created a booking for '{Name}' at {BookingTime} with ID {BookingId}.", bookingRequest.Name, bookingTime, newBooking.Id);
+        Convener selectedConvener = SelectDefaultOrFirstConvenor(availableConveners);
+        var newBooking = CreateAndSaveBooking(bookingTime, bookingRequest.Name, selectedConvener);
         return new BookingResponseDto(newBooking.Id);
+    }
+
+    private Booking CreateAndSaveBooking(DateTime bookingTime, string name, Convener convener)
+    {
+        _logger.LogInformation("Creating a booking for '{Name}' at {BookingTime}.", name, bookingTime);
+        var endTime = bookingTime.AddMinutes(_bookingConfig.BookingDuration);
+        var newBooking = new Booking(bookingTime, endTime, name, convener);
+        _bookingRepository.AddBooking(newBooking);
+        _bookingRepository.SaveChangesAsync().Wait();
+        _logger.LogInformation("Successfully created a booking for '{Name}' at {BookingTime} with ID {BookingId}.", name, bookingTime, newBooking.Id);
+        return newBooking;
+
+    }
+
+    private DateTime ParseBookingTime(string bookingTimeString)
+    {
+        return DateTime.ParseExact(bookingTimeString, "HH:mm", CultureInfo.InvariantCulture);
+    }
+
+    private Convener SelectDefaultOrFirstConvenor(IEnumerable<Convener> conveners)
+    {
+        return conveners.FirstOrDefault(Convener.FIRST_CONVENER);
     }
 }
