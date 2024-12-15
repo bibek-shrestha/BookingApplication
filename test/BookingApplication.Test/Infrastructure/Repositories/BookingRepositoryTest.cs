@@ -33,21 +33,31 @@ public class BookingRepositoryTest : IDisposable
     }
 
     [Fact]
-    public void AddBooking_ShouldStartTrackingTheBooking()
+    public void Given_NewBooking_When_AddedToRepository_Then_TrackingStateIsAdded()
     {
+        //Arrange
         var booking = BookingHelper.CreateNewBooking();
+        
+        //Act
         _bookingRepository.AddBooking(booking);
+
+        //Assert
         var trackedBooking = _context.ChangeTracker.Entries<Booking>().FirstOrDefault();
         Assert.NotNull(trackedBooking);
         Assert.Equal(EntityState.Added, trackedBooking.State);
     }
 
     [Fact]
-    public async void SaveChangesAsync_ShouldSaveTheBookingEntity_AndUpdateTrackingInformation()
+    public async void Given_NewBooking_When_SaveChangesAsyncIsCalled_Then_OneRecordSavedAndTrackingStateIsUnchanged()
     {
+        //Arrange
         var booking = BookingHelper.CreateNewBooking();
         _bookingRepository.AddBooking(booking);
+
+        //Act
         var numberOfSavedRecords = await _bookingRepository.SaveChangesAsync();
+
+        //Assert
         var trackedBooking = _context.ChangeTracker.Entries<Booking>().FirstOrDefault();
         Assert.Equal(1, numberOfSavedRecords);
         Assert.NotNull(trackedBooking);
